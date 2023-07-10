@@ -36,6 +36,6 @@ jobs:
           poetry run pylint pypentair tests
           poetry run pydocstyle pypentair tests
       - name: Run mypy
-        run: poetry run mypy pypentair tests
+        run: poetry run mypy --install-types --non-interactive pypentair tests
       - name: Test with pytest
         run: poetry run pytest --timeout=10 --cov=pypentair --asyncio-mode=auto

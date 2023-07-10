@@ -5,6 +5,10 @@ description = "Python package for interacting with Pentair Home devices"
 authors = ["Nathan Spencer <natekspencer@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/natekspencer/pypentair"
+repository = "https://github.com/natekspencer/pypentair"
+keywords = ["Pentair", "Pentair Home", "salt level sensor", "python"]
+include = ["pypentair/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
