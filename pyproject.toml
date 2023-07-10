@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pypentair"
-version = "0.1.0"
+version = "0.0.0"
 description = "Python package for interacting with Pentair Home devices"
 authors = ["Nathan Spencer <natekspencer@gmail.com>"]
 license = "MIT"
