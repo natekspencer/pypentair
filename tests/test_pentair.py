@@ -1,4 +1,5 @@
 """Test Pentair devices."""
+
 from __future__ import annotations
 
 from .common import SALT_SENSOR

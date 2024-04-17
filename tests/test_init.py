@@ -1,4 +1,5 @@
 """Tests module."""
+
 from pypentair import __version__
 
 

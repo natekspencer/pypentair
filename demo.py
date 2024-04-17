@@ -1,4 +1,5 @@
 """Demo."""
+
 from __future__ import annotations
 
 import argparse
@@ -25,7 +26,7 @@ REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
 
 
 async def main(keep_alive: bool = False) -> None:
-    """Main."""
+    """Run main function."""
     use_token = all((ACCESS_TOKEN, ID_TOKEN, REFRESH_TOKEN))
     try:
         account = token_login() if use_token else password_login()
