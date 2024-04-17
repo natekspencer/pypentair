@@ -1,4 +1,5 @@
 """Utilities."""
+
 from __future__ import annotations
 
 from base64 import b64decode
@@ -23,8 +24,7 @@ def redact(data: Mapping) -> dict:  # type: ignore[misc]
 
 
 @overload
-def redact(data: _T) -> _T:
-    ...
+def redact(data: _T) -> _T: ...
 
 
 def redact(data: _T) -> _T:

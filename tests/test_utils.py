@@ -1,4 +1,5 @@
 """Test utilities."""
+
 from __future__ import annotations
 
 from pypentair.utils import REDACTED, redact

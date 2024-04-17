@@ -1,4 +1,5 @@
 """Common."""
+
 from __future__ import annotations
 
 SALT_SENSOR = {
