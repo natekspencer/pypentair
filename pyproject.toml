@@ -16,17 +16,13 @@ boto3 = "^1.27.1"
 pycognito = "^2023.5.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
-flake8 = "^6.0.0"
-isort = "^5.12.0"
 mypy = "^1.4.1"
-pydocstyle = "^6.3.0"
-pylint = "^2.17.4"
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
-tox = "^4.6.3"
 pytest-timeout = "^2.1.0"
 pytest-asyncio = "^0.21.0"
+ruff = "^0.3"
+tox = "^4.6.3"
 
 [tool.poetry.group.demo.dependencies]
 python-dotenv = "^1.0.0"
@@ -37,6 +33,24 @@ enable = true
 vcs = "git"
 style = "semver"
 pattern = "default-unprefixed"
+
+[tool.ruff.lint]
+select = [
+    "D", # pydocstyle
+    "E", # pycodestyle Error
+    "F", # Pyflakes
+    "I", # isort
+    "W", # pycodestyle Warning
+]
+ignore = [
+    "D203", # 1 blank line required before class docstring
+    "D213", # Multi-line docstring summary should start at the second line
+    "E501", # Line too long
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
