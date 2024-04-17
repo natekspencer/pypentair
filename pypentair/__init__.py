@@ -1,4 +1,5 @@
 """pypentair module."""
+
 from .exceptions import PentairApiException, PentairAuthenticationError
 from .pentair import Pentair
 
