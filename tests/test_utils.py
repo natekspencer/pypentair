@@ -25,6 +25,7 @@ def test_redact() -> None:
         ("s6", "Wifi mac address", "1C5A0840C400"),
         ("s18", "Current power", 183),
         ("s19", "Current motor speed", 43.2),
+        ("s25", "Pump enabled status", True),
         ("s26", "Current estimated flow", 38.0),
     ],
 )

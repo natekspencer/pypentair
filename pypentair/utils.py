@@ -296,10 +296,13 @@ API_FIELD_NAME_MAP: Final[dict[str, str]] = {
 
 
 API_FIELD_VALUE_FUNCTION: Final[dict[str, Callable]] = {
-    "s1": lambda value: datetime.strptime(value, "%y%m%d%H%M%S"),
-    "s18": int,
-    "s19": _divide_by_10,
-    "s26": _divide_by_10,
+    "s1": lambda value: datetime.strptime(value, "%y%m%d%H%M%S"),  # Device time
+    "s13": int,  # RSSI
+    "s17": _divide_by_10,  # Current pressure
+    "s18": int,  # Current power
+    "s19": _divide_by_10,  # Current motor speed
+    "s25": bool,  # Pump enabled status
+    "s26": _divide_by_10,  # Current estimated flow
 }
 
 
