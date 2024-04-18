@@ -73,20 +73,20 @@ API_FIELD_NAME_MAP: Final[dict[str, str]] = {
     "s10": "UDM application software version",
     "s11": "Security key",
     "s12": "Checksum",
-    "s13": "RSSI",
+    "s13": "RSSI",  # dBm
     "s14": "Active program number",
     "s15": "Active reference",
     "s16": "Active value",
-    "s17": "Current pressure",
-    "s18": "Current power",
-    "s19": "Current motor speed",
+    "s17": "Current pressure",  # psi
+    "s18": "Current power",  # watts
+    "s19": "Current motor speed",  # %
     "s20": "Alarm condition",
     "s21": "Relay 1 status",
     "s22": "Relay 2 status",
     "s23": "SSID",
     "s24": "Digital inputs",
     "s25": "Pump enabled status",
-    "s26": "Current estimated flow",
+    "s26": "Current estimated flow",  # gallons per minute
     "s27": "Status word",
     "s28": "Remaining time",
     "s29": "Automation active",
@@ -297,12 +297,12 @@ API_FIELD_NAME_MAP: Final[dict[str, str]] = {
 
 API_FIELD_VALUE_FUNCTION: Final[dict[str, Callable]] = {
     "s1": lambda value: datetime.strptime(value, "%y%m%d%H%M%S"),  # Device time
-    "s13": int,  # RSSI
-    "s17": _divide_by_10,  # Current pressure
-    "s18": int,  # Current power
-    "s19": _divide_by_10,  # Current motor speed
+    "s13": int,  # RSSI (dBm)
+    "s17": _divide_by_10,  # Current pressure (psi)
+    "s18": int,  # Current power (watts)
+    "s19": _divide_by_10,  # Current motor speed (%)
     "s25": bool,  # Pump enabled status
-    "s26": _divide_by_10,  # Current estimated flow
+    "s26": _divide_by_10,  # Current estimated flow (gallons per minute)
 }
 
 

@@ -94,20 +94,20 @@ INTELLIFLO_SENSOR = {
         "s10": "none",  # UDM application software version
         "s11": "16",  # Security key
         "s12": "Rev:B SN: 32MHz",  # Checksum
-        "s13": "-69",  # RSSI
+        "s13": "-69",  # RSSI (dBm)
         "s14": "1",  # Active program number
         "s15": "2",  # Active reference
         "s16": "380",  # Active value
-        "s17": "461",  # Current pressure
-        "s18": "183",  # Current power
-        "s19": "432",  # Current motor speed
+        "s17": "461",  # Current pressure (psi)
+        "s18": "183",  # Current power (watts)
+        "s19": "432",  # Current motor speed (%)
         "s20": "0",  # Alarm condition
         "s21": "0",  # Relay 1 status
         "s22": "0",  # Relay 2 status
         "s23": "Poseidon23",  # SSID
         "s24": "0",  # Digital inputs
         "s25": "1",  # Pump enabled status
-        "s26": "380",  # Current estimated flow
+        "s26": "380",  # Current estimated flow (gallons per minute)
         "s27": "0",  # Status word
         "s28": "337",  # Remaining time
         "s29": "0",  # Automation active
