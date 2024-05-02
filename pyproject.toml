@@ -13,7 +13,7 @@ include = ["pypentair/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.9"
 boto3 = "^1.27.1"
-pycognito = "^2023.5.0"
+pycognito = ">=2023.5,<2025.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.4.1"
