@@ -22,7 +22,7 @@ def decode(value: str) -> str:
 
 
 @overload
-def redact(data: Mapping) -> dict:  # type: ignore[misc]
+def redact(data: Mapping) -> dict:  # type: ignore[overload-overlap]
     ...
 
 
