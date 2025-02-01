@@ -21,7 +21,7 @@ pytest = ">=7.4,<9.0"
 pytest-cov = ">=4.1,<7.0"
 pytest-timeout = "^2.1.0"
 pytest-asyncio = ">=0.21,<0.26"
-ruff = ">=0.5.0,<0.9"
+ruff = ">=0.5.0,<0.10"
 tox = "^4.6.3"
 
 [tool.poetry.group.demo.dependencies]
