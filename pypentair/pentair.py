@@ -121,6 +121,10 @@ class Pentair:
         """Logout of all clients (including app)."""
         self.get_user().logout()
 
+    def get_device(self, device_id: str) -> Any:
+        """Get device."""
+        return self.__get(f"device/device-service/user/device/{device_id}")
+
     def get_devices(self) -> Any:
         """Get devices."""
         return self.__get("device/device-service/user/devices")
