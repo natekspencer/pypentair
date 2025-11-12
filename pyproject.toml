@@ -1,19 +1,26 @@
-[tool.poetry]
+[project]
 name = "pypentair"
-version = "0.0.0"
 description = "Python package for interacting with Pentair Home devices"
-authors = ["Nathan Spencer <natekspencer@gmail.com>"]
-license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/natekspencer/pypentair"
-repository = "https://github.com/natekspencer/pypentair"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Nathan Spencer", email = "natekspencer@gmail.com" }
+]
 keywords = ["Pentair", "Pentair Home", "salt level sensor", "python"]
-include = ["pypentair/py.typed"]
+dynamic = ["version"]
+dependencies = [
+    "boto3 (>=1.27.1)",
+    "pycognito (>=2023.5)"
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-boto3 = "^1.27.1"
-pycognito = ">=2023.5,<2025.0"
+[project.urls]
+Homepage = "https://github.com/natekspencer/pypentair"
+Repository = "https://github.com/natekspencer/pypentair"
+
+[tool.poetry]
+version = "0.0.0"
+include = ["pypentair/py.typed"]
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.4.1"
