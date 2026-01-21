@@ -133,16 +133,34 @@ class Pentair:
         """Make a request."""
         _LOGGER.debug("Making %s request to %s with %s", method, url, redact(kwargs))
 
+        # For PUT/POST with JSON body, include body in signature
+        data = None
+        if "json" in kwargs:
+            import json as json_module
+
+            data = json_module.dumps(kwargs.pop("json"))
+
         request = AWSRequest(
             method=method,
             url=urljoin(BASE_URL, url),
             headers={"x-amz-id-token": self.id_token},
+            data=data,
         )
         self.get_auth().add_auth(request)
         prepped = request.prepare()
-        response = requests.request(
-            method, prepped.url, headers=prepped.headers, timeout=10, **kwargs
-        )
+
+        # Build request kwargs
+        request_kwargs: dict[str, Any] = {"timeout": 10, **kwargs}
+        if data:
+            request_kwargs["data"] = data
+            request_kwargs["headers"] = {
+                **prepped.headers,
+                "Content-Type": "application/json",
+            }
+        else:
+            request_kwargs["headers"] = prepped.headers
+
+        response = requests.request(method, prepped.url, **request_kwargs)
 
         json = response.json()
         _LOGGER.debug(
@@ -162,3 +180,52 @@ class Pentair:
     ) -> Any:
         """Make a post request."""
         return self.__request("post", url, **kwargs)
+
+    def __put(self, url: str, **kwargs: Any) -> Any:
+        """Make a put request."""
+        return self.__request("put", url, **kwargs)
+
+    def start_program(self, device_id: str, program_id: int) -> Any:
+        """Start a pump program.
+
+        Args:
+            device_id: The device ID (e.g., "PNR08IF310654B7093")
+            program_id: Program number (1-14)
+
+        Returns:
+            API response dict
+        """
+        return self.__put(
+            f"device/device-service/user/device/{device_id}",
+            json={"payload": {f"zp{program_id}e10": "3"}},
+        )
+
+    def stop_program(self, device_id: str, program_id: int) -> Any:
+        """Stop a pump program.
+
+        Args:
+            device_id: The device ID
+            program_id: Program number (1-14)
+
+        Returns:
+            API response dict
+        """
+        return self.__put(
+            f"device/device-service/user/device/{device_id}",
+            json={"payload": {f"zp{program_id}e10": "2"}},
+        )
+
+    def set_pump_enabled(self, device_id: str, enabled: bool) -> Any:
+        """Enable or disable the pump.
+
+        Args:
+            device_id: The device ID
+            enabled: True to enable, False to disable
+
+        Returns:
+            API response dict
+        """
+        return self.__put(
+            f"device/device-service/user/device/{device_id}",
+            json={"payload": {"d25": "1" if enabled else "0"}},
+        )
