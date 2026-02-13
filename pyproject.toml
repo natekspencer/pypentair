@@ -1,45 +1,55 @@
 [project]
 name = "pypentair"
-description = "Python package for interacting with Pentair Home devices"
-readme = "README.md"
+description = "Python package for interacting with Pentair Home devices over the cloud"
+authors = [{ name = "Nathan Spencer", email = "natekspencer@gmail.com" }]
 requires-python = ">=3.10"
+readme = "README.md"
 license = "MIT"
-authors = [
-    { name = "Nathan Spencer", email = "natekspencer@gmail.com" }
+keywords = [
+    "Pentair",
+    "Pentair Home",
+    "salt level sensor",
+    "python",
 ]
-keywords = ["Pentair", "Pentair Home", "salt level sensor", "python"]
-dynamic = ["version"]
 dependencies = [
-    "boto3 (>=1.27.1)",
-    "pycognito (>=2023.5)"
+    "boto3>=1.27.1",
+    "pycognito>=2023.5",
 ]
+dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://github.com/natekspencer/pypentair"
 Repository = "https://github.com/natekspencer/pypentair"
 
-[tool.poetry]
-version = "0.0.0"
-include = ["pypentair/py.typed"]
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2,<2.0",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0,<10.0",
+    "pytest-asyncio>=1.3.0,<2.0",
+    "pytest-cov>=7.0,<8.0",
+    "pytest-timeout>=2.1,<3",
+    "ruff>=0.15.1",
+    "tox>=4.32.0,<5.0",
+]
+demo = [
+    "python-dotenv>=1.2.1,<2",
+    "deepdiff>=6.3.1,<9.0.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-mypy = ">=1.18.2,<2.0"
-pytest = ">=9.0,<10.0"
-pytest-asyncio = ">=1.3.0,<2.0"
-pytest-cov = ">=7.0,<8.0"
-pytest-timeout = ">=2.1,<3"
-ruff = ">=0.14.4,<0.15"
-tox = ">=4.32.0,<5.0"
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.demo.dependencies]
-python-dotenv = "^1.2.1"
-deepdiff = ">=6.3.1,<9.0.0"
+[tool.hatch.build.hooks.version]
+path = "pypentair/__init__.py"
+pattern = true
 
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-style = "semver"
-pattern = "default-unprefixed"
+[tool.hatch.build.targets.sdist]
+include = ["pypentair"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
 [tool.ruff.lint]
 select = [
@@ -59,6 +69,12 @@ ignore = [
 combine-as-imports = true
 split-on-trailing-comma = false
 
-[build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true }}]
+default-groups = [
+    "dev",
+    "demo",
+]
+
+[tool.uv-dynamic-versioning]
+pattern = "default-unprefixed"
