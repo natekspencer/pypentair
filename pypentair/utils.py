@@ -310,6 +310,8 @@ def get_api_field_name_and_value(
 ) -> tuple[str, Any]:
     """Get the API field name and converted value."""
     name = API_FIELD_NAME_MAP.get(key, key)
+    if isinstance(value, Mapping) and "value" in value:
+        value = value["value"]
     val = value
     if _fn := API_FIELD_VALUE_FUNCTION.get(key):
         try:
