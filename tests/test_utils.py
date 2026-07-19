@@ -57,10 +57,11 @@ def test_field_mapping_error(caplog: pytest.LogCaptureFixture) -> None:
         ("s18", "Current power", 221),
         ("s19", "Current motor speed", 50.0),
         ("s26", "Current estimated flow", 27.0),
+        ("s2", "Finished good serial number", "serial"),
     ],
 )
 def test_field_mapping_structured_payload(
-    key: str, name: str, value: str | float | datetime
+    key: str, name: str, value: str | int | float | datetime
 ) -> None:
     """Test field mapping with the newer structured (dict-wrapped) payload."""
     raw_values = {
@@ -70,6 +71,7 @@ def test_field_mapping_structured_payload(
         "s18": "221",
         "s19": "500",
         "s26": "270",
+        "s2": "serial",
     }
     wrapped = {
         "name": "whatever",
