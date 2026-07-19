@@ -23,4 +23,4 @@ I maintain this python project in my spare time. If you find it useful, consider
 
 ## 📈 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=natekspencer/pypentair)](https://www.star-history.com/#natekspencer/pypentair)
+[![Star History Chart](https://api.star-history.com/chart?repos=natekspencer/pypentair&type=date&legend=top-left&sealed_token=ulaQ_u8wM14U5WtFtCzogFOjGIO8NXD2r7eo6FHTKnU3EYBTHUpTA2wsyiqTe05_aaTpbhfHZy1DciEVe4sjJJPLqZvhGxw1Z4E01dN2pjM55XQHvbFB-lC51iS1HcLcMYUxys1DGjdtA1cNSM4SgmE0eqBdflcNOisyg4Qf83epOonloRw_V6sgg41k)](https://www.star-history.com/?repos=natekspencer%2Fpypentair)
