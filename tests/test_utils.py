@@ -7,7 +7,13 @@ from typing import cast
 
 import pytest
 
-from pypentair.utils import REDACTED, get_api_field_name_and_value, redact
+from pypentair.utils import (
+    MISSING,
+    REDACTED,
+    diff_data,
+    get_api_field_name_and_value,
+    redact,
+)
 
 from .common import INTELLIFLO_SENSOR
 
@@ -88,3 +94,24 @@ def test_field_mapping_structured_payload(
         "delivered": "1780921580034",
     }
     assert get_api_field_name_and_value(key, wrapped) == (name, value)
+
+
+def test_diff_data() -> None:
+    """Test reporting the differences between two payloads."""
+    old = {"name": "Pool", "fields": {"s1": 5, "s2": True}, "tags": [1, 2]}
+
+    assert diff_data(old, old) == {}
+    assert diff_data(old, {**old, "name": "Spa"}) == {"root['name']": ("Pool", "Spa")}
+    assert diff_data(old, {**old, "fields": {"s1": 6, "s2": True}}) == {
+        "root['fields']['s1']": (5, 6)
+    }
+    assert diff_data(old, {**old, "tags": [2, 1], "new": 1}) == {
+        "root['tags']": ([1, 2], [2, 1]),
+        "root['new']": (MISSING, 1),
+    }
+    assert diff_data(old, {"name": "Pool"}) == {
+        "root['fields']": ({"s1": 5, "s2": True}, MISSING),
+        "root['tags']": ([1, 2], MISSING),
+    }
+    assert diff_data({}, {"data": []}) == {"root['data']": (MISSING, [])}
+    assert repr(MISSING) == "<missing>"

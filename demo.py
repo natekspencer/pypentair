@@ -8,10 +8,10 @@ import logging
 import os
 from pathlib import Path
 
-from deepdiff import DeepDiff
 from dotenv import set_key
 
 from pypentair import Pentair, PentairAuthenticationError
+from pypentair.utils import diff_data
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -42,14 +42,7 @@ async def main(keep_alive: bool = False) -> None:
     while True:
         try:
             _devices = account.get_devices()
-            diff = DeepDiff(
-                devices,
-                _devices,
-                ignore_order=True,
-                report_repetition=True,
-                verbose_level=2,
-            )
-            logging.debug(diff if diff else "No changes")
+            logging.debug(diff_data(devices, _devices) or "No changes")
             devices = _devices
         except Exception as ex:  # pylint: disable=broad-except
             logging.error(ex)
