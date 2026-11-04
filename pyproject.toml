@@ -14,6 +14,7 @@ keywords = [
 dependencies = [
     "boto3>=1.27.1",
     "pycognito>=2023.5",
+    "pyjwt>=2.0",
 ]
 dynamic = ["version"]
 
