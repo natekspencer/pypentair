@@ -9,7 +9,7 @@
 ![Pepy Total Downloads](https://img.shields.io/pepy/dt/pypentair?style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pypentair?style=flat-square)
 
-A Python package for interacting with Pentair Home devices over the cloud. Used in the [Pentair Home for Home Assistant](https://github.com/natekspencer/hacs-pentair) integration.
+A Python package for interacting with Pentair Home devices over the cloud. Used in the [Pentair Home for Home Assistant](https://github.com/natekspencer/ha-pentair) integration.
 
 ## ❤️ Support Me
 
