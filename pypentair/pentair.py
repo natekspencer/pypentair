@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from typing import Any, Final
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 import requests
 from boto3 import client as boto_client
@@ -148,6 +148,16 @@ class Pentair:
         params = path_params or {}
         url = path.format(**params)
         log_url = path.format(**dict.fromkeys(params, REDACTED))
+        # Values as they may appear in text, including percent-encoded in URLs
+        sensitive = {
+            form for value in params.values() if value for form in (value, quote(value))
+        }
+
+        def scrub(text: str) -> str:
+            for value in sensitive:
+                text = text.replace(value, REDACTED)
+            return text
+
         _LOGGER.debug(
             "Making %s request to %s with %s", method, log_url, redact(kwargs)
         )
@@ -163,26 +173,26 @@ class Pentair:
             response = requests.request(
                 method, prepped.url, headers=prepped.headers, timeout=10, **kwargs
             )
+            status_code = response.status_code
             try:
                 json = response.json()
             except ValueError:
+                if status_code == 200:
+                    raise
+                # Error responses may not have a JSON body, e.g. a gateway error
                 json = response.text
+                log_body = scrub(json)
+            else:
+                log_body = redact(json)
             _LOGGER.debug(
-                "Received %s response from %s: %s",
-                response.status_code,
-                log_url,
-                redact(json),
+                "Received %s response from %s: %s", status_code, log_url, log_body
             )
-            if (status_code := response.status_code) != 200:
-                _LOGGER.error("Status: %s - %s", status_code, redact(json))
+            if status_code != 200:
+                _LOGGER.error("Status: %s - %s", status_code, log_body)
                 response.raise_for_status()
         except requests.RequestException as err:
-            message = str(err)
-            values = [value for value in params.values() if value in message]
-            if not values:
+            if (message := scrub(str(err))) == str(err):
                 raise
-            for value in values:
-                message = message.replace(value, REDACTED)
             # Re-raised without the original, whose message includes the URL
             raise type(err)(
                 message, request=err.request, response=err.response

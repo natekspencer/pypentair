@@ -106,3 +106,44 @@ def test_error_without_device_id_is_unchanged(pentair: Pentair) -> None:
         pentair.get_devices()
 
     assert exc_info.value is error
+
+
+def test_non_json_error_body_redacts_device_id(
+    pentair: Pentair, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test a non-JSON error body is logged without the device ID."""
+    body = f"<html>No device {DEVICE_ID}</html>"
+    with (
+        caplog.at_level(logging.DEBUG, logger="pypentair"),
+        patch("requests.request", return_value=_response(404, body)),
+        pytest.raises(requests.HTTPError),
+    ):
+        pentair.get_device(DEVICE_ID)
+
+    assert DEVICE_ID not in caplog.text
+    assert f"<html>No device {REDACTED}</html>" in caplog.text
+
+
+def test_non_json_success_body_raises_decode_error(pentair: Pentair) -> None:
+    """Test a successful response without a JSON body is not returned as text."""
+    with (
+        patch("requests.request", return_value=_response(200, "<html>OK</html>")),
+        pytest.raises(requests.JSONDecodeError),
+    ):
+        pentair.get_device(DEVICE_ID)
+
+
+def test_error_redacts_percent_encoded_device_id(pentair: Pentair) -> None:
+    """Test a device ID is redacted where it appears percent-encoded in a URL."""
+    device_id = "Pool Pump"
+    error = requests.ConnectionError(
+        "Max retries exceeded with url: /device/device-service/user/device/Pool%20Pump"
+    )
+    with (
+        patch("requests.request", side_effect=error),
+        pytest.raises(requests.ConnectionError) as exc_info,
+    ):
+        pentair.get_device(device_id)
+
+    assert "Pool%20Pump" not in str(exc_info.value)
+    assert REDACTED in str(exc_info.value)
