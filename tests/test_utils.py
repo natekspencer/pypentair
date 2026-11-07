@@ -28,7 +28,7 @@ def test_redact() -> None:
     "key,name,value",
     [
         ("s1", "Device time", datetime(2024, 4, 17, 16, 23, 0)),
-        ("s6", "Wifi mac address", "1C5A0840C400"),
+        ("s6", "Wifi mac address", "02000000ABCD"),
         ("s18", "Current power", 183),
         ("s19", "Current motor speed", 43.2),
         ("s25", "Pump enabled status", True),
@@ -115,3 +115,14 @@ def test_diff_data() -> None:
     }
     assert diff_data({}, {"data": []}) == {"root['data']": (MISSING, [])}
     assert repr(MISSING) == "<missing>"
+
+
+def test_redact_pump_fields() -> None:
+    """Test sensitive IntelliFlo fields are redacted, in both payload shapes."""
+    fields = {"s6": "02000000ABCD", "s11": "16", "s23": "MyWifi", "d15": "1234"}
+    detailed = {key: {"name": key, "value": value} for key, value in fields.items()}
+    for data in (fields, detailed):
+        payload = {"data": [{"fields": {**data, "s13": "-69"}}]}
+        assert redact(payload) == {
+            "data": [{"fields": dict.fromkeys(fields, REDACTED) | {"s13": "-69"}}]
+        }
