@@ -111,17 +111,21 @@ def test_error_without_device_id_is_unchanged(pentair: Pentair) -> None:
 def test_non_json_error_body_redacts_device_id(
     pentair: Pentair, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Test a non-JSON error body is logged without the device ID."""
-    body = f"<html>No device {DEVICE_ID}</html>"
+    """Test a non-JSON error body is logged by type and size only."""
+    other_device_id = "PNRA5IF3100000"
+    body = f"<html>Devices {DEVICE_ID}, {other_device_id}</html>"
+    response = _response(500, body)
+    response.headers["Content-Type"] = "text/html"
     with (
         caplog.at_level(logging.DEBUG, logger="pypentair"),
-        patch("requests.request", return_value=_response(404, body)),
+        patch("requests.request", return_value=response),
         pytest.raises(requests.HTTPError),
     ):
-        pentair.get_device(DEVICE_ID)
+        pentair.get_devices()
 
     assert DEVICE_ID not in caplog.text
-    assert f"<html>No device {REDACTED}</html>" in caplog.text
+    assert other_device_id not in caplog.text
+    assert f"{REDACTED} (text/html, {len(body)} bytes)" in caplog.text
 
 
 def test_non_json_success_body_raises_decode_error(pentair: Pentair) -> None:

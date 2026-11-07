@@ -179,9 +179,14 @@ class Pentair:
             except ValueError:
                 if status_code == 200:
                     raise
-                # Error responses may not have a JSON body, e.g. a gateway error
+                # Error responses may not have a JSON body, e.g. a gateway error.
+                # Unstructured text can't be redacted reliably, so only its
+                # type and size are logged.
                 json = response.text
-                log_body = scrub(json)
+                log_body = (
+                    f"{REDACTED} ({response.headers.get('Content-Type', 'no type')}, "
+                    f"{len(response.content)} bytes)"
+                )
             else:
                 log_body = redact(json)
             _LOGGER.debug(
