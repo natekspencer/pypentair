@@ -154,6 +154,7 @@ class Pentair:
         }
 
         def scrub(text: str) -> str:
+            """Replace the path parameter values in text with the placeholder."""
             for value in sensitive:
                 text = text.replace(value, REDACTED)
             return text

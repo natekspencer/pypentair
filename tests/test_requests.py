@@ -17,6 +17,7 @@ URL = f"https://api.pentair.cloud/device/device-service/user/device/{DEVICE_ID}"
 
 
 def _response(status_code: int, body: str) -> requests.Response:
+    """Return a response for the device URL with the given status and body."""
     response = requests.Response()
     response.status_code = status_code
     response.reason = "Reason"
