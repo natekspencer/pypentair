@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from typing import Any, Final
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 import requests
 from boto3 import client as boto_client
@@ -16,11 +17,13 @@ from pycognito import Cognito
 
 from .const import CLIENT_ID, IDENTITY_POOL_ID, REGION_NAME, USER_POOL_ID
 from .exceptions import PentairAuthenticationError
-from .utils import decode, redact
+from .utils import REDACTED, decode, redact
 
 _LOGGER = logging.getLogger(__name__)
 
 BASE_URL: Final = "https://api.pentair.cloud/"
+DEVICE_PATH: Final = "device/device-service/user/device/{device_id}"
+DEVICES_PATH: Final = "device/device-service/user/devices"
 
 
 class Pentair:
@@ -123,15 +126,42 @@ class Pentair:
 
     def get_device(self, device_id: str) -> Any:
         """Get device."""
-        return self.__get(f"device/device-service/user/device/{device_id}")
+        return self.__get(DEVICE_PATH, path_params={"device_id": device_id})
 
     def get_devices(self) -> Any:
         """Get devices."""
-        return self.__get("device/device-service/user/devices")
+        return self.__get(DEVICES_PATH)
 
-    def __request(self, method: str, url: str, **kwargs: Any) -> Any:
-        """Make a request."""
-        _LOGGER.debug("Making %s request to %s with %s", method, url, redact(kwargs))
+    def __request(
+        self,
+        method: str,
+        path: str,
+        *,
+        path_params: Mapping[str, str] | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Make a request.
+
+        Values in `path_params` identify the account's devices, so they are
+        filled into `path` for the request but kept out of logs and errors.
+        """
+        params = path_params or {}
+        url = path.format(**params)
+        log_url = path.format(**dict.fromkeys(params, REDACTED))
+        # Values as they may appear in text, including percent-encoded in URLs
+        sensitive = {
+            form for value in params.values() if value for form in (value, quote(value))
+        }
+
+        def scrub(text: str) -> str:
+            """Replace the path parameter values in text with the placeholder."""
+            for value in sensitive:
+                text = text.replace(value, REDACTED)
+            return text
+
+        _LOGGER.debug(
+            "Making %s request to %s with %s", method, log_url, redact(kwargs)
+        )
 
         request = AWSRequest(
             method=method,
@@ -140,25 +170,47 @@ class Pentair:
         )
         self.get_auth().add_auth(request)
         prepped = request.prepare()
-        response = requests.request(
-            method, prepped.url, headers=prepped.headers, timeout=10, **kwargs
-        )
-
-        json = response.json()
-        _LOGGER.debug(
-            "Received %s response from %s: %s", response.status_code, url, redact(json)
-        )
-        if (status_code := response.status_code) != 200:
-            _LOGGER.error("Status: %s - %s", status_code, json)
-            response.raise_for_status()
+        try:
+            response = requests.request(
+                method, prepped.url, headers=prepped.headers, timeout=10, **kwargs
+            )
+            status_code = response.status_code
+            try:
+                json = response.json()
+            except ValueError:
+                if status_code == 200:
+                    raise
+                # Error responses may not have a JSON body, e.g. a gateway error.
+                # Unstructured text can't be redacted reliably, so only its
+                # type and size are logged.
+                json = response.text
+                log_body = (
+                    f"{REDACTED} ({response.headers.get('Content-Type', 'no type')}, "
+                    f"{len(response.content)} bytes)"
+                )
+            else:
+                log_body = redact(json)
+            _LOGGER.debug(
+                "Received %s response from %s: %s", status_code, log_url, log_body
+            )
+            if status_code != 200:
+                _LOGGER.error("Status: %s - %s", status_code, log_body)
+                response.raise_for_status()
+        except requests.RequestException as err:
+            if (message := scrub(str(err))) == str(err):
+                raise
+            # Re-raised without the original, whose message includes the URL
+            raise type(err)(
+                message, request=err.request, response=err.response
+            ) from None
         return json
 
-    def __get(self, url: str, **kwargs: Any) -> Any:
+    def __get(self, path: str, **kwargs: Any) -> Any:
         """Make a get request."""
-        return self.__request("get", url, **kwargs)
+        return self.__request("get", path, **kwargs)
 
     def __post(  # pylint: disable=unused-private-member
-        self, url: str, **kwargs: Any
+        self, path: str, **kwargs: Any
     ) -> Any:
         """Make a post request."""
-        return self.__request("post", url, **kwargs)
+        return self.__request("post", path, **kwargs)

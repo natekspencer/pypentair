@@ -87,7 +87,7 @@ INTELLIFLO_SENSOR = {
         "s1": "240417162300",  # Device time
         "s3": "1",  # Drive type
         "s5": "1",  # Relay installed
-        "s6": "1C5A0840C400",  # Wifi mac address
+        "s6": "02000000ABCD",  # Wifi mac address
         "s7": "1.05",  # Drive software version
         "s8": "0.98",  # IoT version
         "s9": "1.02.000",  # Controller version
@@ -104,7 +104,7 @@ INTELLIFLO_SENSOR = {
         "s20": "0",  # Alarm condition
         "s21": "0",  # Relay 1 status
         "s22": "0",  # Relay 2 status
-        "s23": "Poseidon23",  # SSID
+        "s23": "ExampleWifi",  # SSID
         "s24": "0",  # Digital inputs
         "s25": "1",  # Pump enabled status
         "s26": "380",  # Current estimated flow (gallons per minute)

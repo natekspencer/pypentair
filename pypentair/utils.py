@@ -13,7 +13,18 @@ _T = TypeVar("_T")
 
 ENCODING: Final = "utf-8"
 REDACTED: Final = "**REDACTED**"
-REDACT_FIELDS: Final = ["arn", "deviceId", "email", "userId"]
+REDACT_FIELDS: Final = [
+    # Account and device identifiers
+    "arn",
+    "deviceId",
+    "email",
+    "userId",
+    # IntelliFlo pump fields
+    "s6",  # Wifi mac address
+    "s11",  # Security key
+    "s23",  # SSID
+    "d15",  # Password
+]
 
 
 def decode(value: str) -> str:
