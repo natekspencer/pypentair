@@ -766,6 +766,7 @@ default-groups = ["demo", "dev"]
 dependencies = [
     { name = "boto3" },
     { name = "pycognito" },
+    { name = "pyjwt" },
 ]
 
 [package.dev-dependencies]
@@ -788,6 +789,7 @@ dev = [
 requires-dist = [
     { name = "boto3", specifier = ">=1.27.1" },
     { name = "pycognito", specifier = ">=2023.5" },
+    { name = "pyjwt", specifier = ">=2.0" },
 ]
 
 [package.metadata.requires-dev]
